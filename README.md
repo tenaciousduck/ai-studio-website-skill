@@ -51,12 +51,12 @@ Open a project made in AI Studio and tell Claude what you're building. The skill
 
 The first time, Claude offers to save your settings to `~/.claude/ai-studio-setup.md`: your name, what needs your approval, how to describe the platform on public pages, and how much to explain. They live outside the plugin, so updates won't erase them. See [setup-template.md](skills/building-ai-studio-websites/setup-template.md).
 
-## How far to trust it
+## Where it comes from
 
-- **Platform facts** come from one real project, last checked October to November 2026. AI Studio changes often, so Claude is told to re-check anything a design depends on.
-- **Marked "unproven"** means best practice we haven't built yet, including the sitemap route, security headers, spam protection and test workflow.
-- **The code templates** ran on one live site, but haven't been tried in a new project. Adapt them and test them.
-- **The skill has only been tested on practice briefs,** not a second real site.
+- **A real production site:** the lessons, tools and code come from a live AI Studio site that takes real payments.
+- **Platform facts** were last checked October to November 2026. AI Studio changes often, so Claude is told to re-check anything a design depends on.
+- **Marked "unproven"** means best practice not yet built, including the sitemap route, security headers, spam protection and test workflow.
+- **The code templates** are starting points. Adapt them to your project and test them.
 
 ## Not legal advice
 
