@@ -1,0 +1,12 @@
+{
+  "name": "image-tools",
+  "private": true,
+  "type": "module",
+  "description": "Run on a computer, not on the hosted site: makes the sized AVIF and WebP copies of public/images and the favicons.",
+  "scripts": {
+    "optimize": "node optimize.mjs"
+  },
+  "dependencies": {
+    "sharp": "0.35.5"
+  }
+}

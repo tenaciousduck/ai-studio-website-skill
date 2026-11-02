@@ -1,0 +1,20 @@
+{
+  "name": "ai-studio-websites",
+  "description": "Build reliable websites with HighLevel AI Studio and Claude Code, for any type of business: platform gaps, depth planning, admin decisions, checkout, forms, consent, legal pages, speed, SEO and launch checks.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Tyler Hoffarth"
+  },
+  "homepage": "https://github.com/tenaciousduck/ai-studio-website-skill",
+  "repository": "https://github.com/tenaciousduck/ai-studio-website-skill",
+  "license": "MIT",
+  "keywords": [
+    "highlevel",
+    "gohighlevel",
+    "ai-studio",
+    "websites",
+    "seo",
+    "performance",
+    "skills"
+  ]
+}

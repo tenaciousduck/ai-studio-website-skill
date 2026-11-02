@@ -1,0 +1,18 @@
+# Copy to .github/workflows/ci.yml. Runs the checks on every pull request.
+# Unproven on an AI Studio project: confirm it passes on a first pull request.
+# Add a lint step once the project's lint count is at zero, or it will always fail.
+name: Checks
+
+on:
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bunx tsc --noEmit
+      - run: bun test
+      - run: bun run build
