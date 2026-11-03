@@ -5,6 +5,10 @@
 //
 // It also tries a tracking-tagged address and a page that shouldn't exist. Run
 // with no paths to use every address in the site's sitemap.xml.
+// Also lists AI bot access, llms.txt and security headers.
+import { AI_BOTS_CHECKED, aiBotAccess, starGroupBlocksAll } from "./lib/ai-bots.mjs";
+import { isPlainTextFile, missingSecurityHeaders } from "./lib/http-checks.mjs";
+
 const [base, ...given] = process.argv.slice(2);
 if (!base) {
   console.error("usage: node seo-check.mjs <baseUrl> [path...]");
@@ -21,10 +25,26 @@ const problem = (...line) => {
 };
 
 const robots = await fetch(`${base}/robots.txt`);
-const robotsText = robots.ok ? await robots.text() : "";
+const robotsBody = robots.ok ? await robots.text() : "";
+// A site may answer an unknown address with its app page and a 200: not a robots.txt.
+const hasRobots = robots.ok && isPlainTextFile(robots.headers.get("content-type"), robotsBody);
+const robotsText = hasRobots ? robotsBody : "";
 console.log(`robots.txt [${robots.status}]`, /Sitemap:/i.test(robotsText) ? "lists a sitemap" : "");
-if (!robots.ok) problem("no robots.txt");
-if (/^\s*Disallow:\s*\/\s*$/im.test(robotsText)) problem("robots.txt blocks the whole site");
+if (!hasRobots) problem("no robots.txt");
+if (starGroupBlocksAll(robotsText)) problem("robots.txt blocks the whole site");
+
+// Information only: letting AI crawlers in or out is the owner's choice.
+console.log(`AI bots (list checked ${AI_BOTS_CHECKED}):`);
+for (const bot of aiBotAccess(robotsText))
+  console.log(`  ${bot.token} (${bot.owner}, ${bot.purpose}): ${bot.access} ${bot.named ? "named" : "via *"}`);
+
+const llms = await fetch(`${base}/llms.txt`);
+const hasLlms = llms.ok && isPlainTextFile(llms.headers.get("content-type"), await llms.text());
+console.log(`llms.txt: ${hasLlms ? "present" : "none (optional)"}`);
+
+// Information only: some hosts don't let a site set these.
+const missing = missingSecurityHeaders((await fetch(base, { method: "HEAD" })).headers);
+console.log(`security headers: ${missing.length ? `not set: ${missing.join(", ")}` : "all four set"}`);
 
 const sitemap = await fetch(`${base}/sitemap.xml`);
 const sitemapText = sitemap.ok ? await sitemap.text() : "";

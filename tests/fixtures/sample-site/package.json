@@ -1,0 +1,12 @@
+{
+  "name": "glimmerpane-window-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "@leadconnector/vite-tanstack-config": "^1.0.0"
+  }
+}

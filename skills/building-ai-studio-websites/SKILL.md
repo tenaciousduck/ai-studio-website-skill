@@ -1,6 +1,6 @@
 ---
 name: building-ai-studio-websites
-description: Use when planning, starting, building, optimizing or launching a website made in GoHighLevel (GHL, HighLevel, LeadConnector) AI Studio, for any type of business, or when a repo has .vibe/project.json, @leadconnector/vite-tanstack-config or src/integrations/payments. Also use when such a site needs a sitemap, admin editor, checkout, CRM forms, consent, cookie notice, terms of sale, privacy page, image, font, JavaScript or SEO work, or AI Studio shows "Diverged".
+description: Use when planning, starting, building or launching a new website in GoHighLevel (GHL, HighLevel, LeadConnector) AI Studio, for any type of business, or when adding a new feature to one, such as an admin editor, checkout, CRM form, cookie notice, terms of sale or privacy page. Also use when a repo has .vibe/project.json, @leadconnector/vite-tanstack-config or src/integrations/payments and the work is a new build or a new feature. Not for checking, fixing or improving an existing site, including speed, search, sitemap, forms not reaching GHL or "Diverged"; that is auditing-ai-studio-websites.
 ---
 
 # Building AI Studio Websites
@@ -15,7 +15,8 @@ AI Studio makes a working site quickly, then Claude does the real build from the
 
 ## First, in every project
 
-1. **Read the builder's settings.** Look for `.claude/ai-studio-setup.md` in the project, then `~/.claude/ai-studio-setup.md`. If neither exists, offer to fill in `setup-template.md` with the builder and save it to the second path. It holds their name, approvals, wording for the platform and how much explanation they want. Don't store it inside this skill's folder, because plugin updates replace that folder.
+0. **Show the opener.** Read `../../shared/opener.md` (from this skill's folder) and show its **build version** once per session, before any questions or work. To choose the full or short form it needs the builder's settings, so do step 1 first, then show the opener. The six phases it lists are explained in `../../shared/sessions.md`, under `## Build phases`.
+1. **Read the builder's settings.** Look for `.claude/ai-studio-setup.md` in the project, then `~/.claude/ai-studio-setup.md`. If neither exists, offer to fill in `setup-template.md` with the builder and save it to the second path. It holds their name, approvals, wording for the platform, how much explanation they want, how thorough the checking is and whether the opener is full or short. Don't store it inside this skill's folder, because plugin updates replace that folder.
 2. **Check the required skills.** This skill needs superpowers: `superpowers:brainstorming`, `superpowers:writing-plans` and `superpowers:subagent-driven-development`. If it's missing, tell the builder to run `/plugin install superpowers@claude-plugins-official`. If they decline, follow the same steps by hand: discovery, spec, plan, review.
 3. **Choose the depth,** and say which and why.
 
@@ -26,6 +27,8 @@ AI Studio makes a working site quickly, then Claude does the real build from the
 | Full | Takes money, holds sensitive details, or serves a regulated audience | A mockup of every page, a builder and reviewer per task, accessibility pass, whole-branch review, terms of sale, hosted test list |
 
 The highest row that matches wins. Every depth keeps the quality work: images, fonts, SEO, a truthful privacy page, a cookie check and live checks. These are judgment calls, and the setup file or the builder can override them.
+
+Depth picks the process. A separate setting, the quality dial, picks how thorough the checking is: thorough by default, or lighter if the builder says "lighter checks" or the setup file has `Checking level: lighter`. The dial only turns checking down from what the depth sets, and never below the items that can't be dialed down. Read `../../shared/sessions.md`, sections `## Quality dial` and `## Build phases`, for what each level means and how the seven stages group into six phases. Sessions, waiting points and branching are in the same file.
 
 ## Stages
 
@@ -57,7 +60,7 @@ Read the chapter for the stage you're in. Don't load them all at once.
 
 ## Reusable parts
 
-- `tools/`: page audit and compare, SEO check, cookie check, Lighthouse summary. Run them from this skill's folder, and keep their output in the session scratchpad. Usage is at the top of each file. They need Node 22+ and Google Chrome; outside macOS, set `CHROME_PATH` to Chrome's location.
+- `tools/`: page audit and compare, SEO check, cookie check, content check, Lighthouse summary. `content-check.mjs` lists text that might be filler or invented, as candidates for a person to judge, never verdicts. `seo-check.mjs` also reports which AI bots robots.txt allows, whether `llms.txt` exists and which common security headers are set. Run them from this skill's folder, and keep their output in the session scratchpad. Usage is at the top of each file. They need Node 22+ and Google Chrome; outside macOS, set `CHROME_PATH` to Chrome's location.
 - `templates/`: working code from one live site, to adapt and test: image pipeline, responsive image component, upload shrinking, server-side CRM forms, request memo, cookie notice, sample terms, and the code that keeps the sign-in toolkit off public pages. Read `templates/README.md` before copying.
 
 ## Common mistakes

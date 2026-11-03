@@ -1,6 +1,6 @@
 # AI Studio website setup
 
-Your settings for the `building-ai-studio-websites` skill. Save a filled-in copy to `~/.claude/ai-studio-setup.md`, or to `.claude/ai-studio-setup.md` in a project to override it there. Leave a line blank to use the default.
+Your settings for the `building-ai-studio-websites` and `auditing-ai-studio-websites` skills. Save a filled-in copy to `~/.claude/ai-studio-setup.md`, or to `.claude/ai-studio-setup.md` in a project to override it there. Leave a line blank to use the default.
 
 ## About you
 
@@ -28,6 +28,8 @@ Publishing and switching Payments to live are always yours. Claude never does ei
 
 ## Defaults
 
+- Checking level: (thorough or lighter; default: thorough)
+- Opener: (full or short; default: full)
 - Depth override: (Light, Standard or Full; default: chosen per project)
 - Design starting point: (default: none, ask each client)
 - A real phone to check on: (default: none, so Claude says phone checks weren't done)
