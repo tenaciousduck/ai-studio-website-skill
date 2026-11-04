@@ -19,6 +19,9 @@ Check the stack is the same first; these assume the first project's template.
 | `src/lib/sender.ts` | Legal sender and seller, and the sender line | Replace every `REPLACE_` value | Used by the terms and sign-up forms |
 | `src/lib/terms.ts` | Terms of Sale as data, with its version | Every `REPLACE_` is the client's decision. Read `references/09-legal.md` first | `sender.ts` |
 | `src/components/terms-content.tsx`, `terms-dialog.tsx` | Terms words, and the pop-up before payment | Colour classes such as `text-frame-plum` and the `INK_BUTTON` import are the first site's. Replace them. Phone shows in the seller section | `terms.ts`, shadcn dialog |
+| `src/lib/security-headers.ts` | HSTS, nosniff and Referrer-Policy on every app response | Wrap both returns in `src/server.ts` with `withSecurityHeaders`. Read the comments before adding `includeSubDomains` or `X-Frame-Options` | |
+| `src/lib/sitemap.ts`, `src/routes/sitemap[.]xml.ts` | Sitemap built from fixed pages plus published items, sent as XML | Set `PAGES`; replace the item loader and paths. Delete `public/sitemap.xml`. Keep `Sitemap:` in `robots.txt` | `site.ts` |
+| `src/lib/llms-txt.ts`, `src/routes/llms[.]txt.ts` | Optional `/llms.txt` for AI tools, as plain text | Replace the loader; approved fields only; pages by name only | `site.ts` |
 | `src/lib/cookie-notice.ts`, `src/components/cookie-notice.tsx` | Small no-choice notice | Check the words against `tools/cookie-check.mjs`. Only for sites with no ad pixels | `NewTabNote` and colour classes from the first site. Replace or remove them |
 
 **Not included, build them when needed:** a required tick box before the checkout (`references/09-legal.md`), structured data in one tested file, a date-driven release hook, and copy tests that fail if legal pages name the platform or lose a required section. `github/ci.yml` is a starting test workflow, unproven on AI Studio.

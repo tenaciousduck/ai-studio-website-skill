@@ -123,6 +123,7 @@ Mark each of your own calls "(my call)", so the builder can challenge it.
 ## Build order
 
 1. Groundwork with no visible change: any schema and data model, pure logic, tests.
+   Include the search groundwork here, because retrofitting it took three rounds on the first site: `SITE_URL`, canonical and hreflang in the root route, the security headers in `src/server.ts`, the generated sitemap (and `llms.txt` if wanted), structured data in one tested file, and a test pinning the home description's length (`05-performance-seo.md`, "SEO foundations").
 2. Mockups at the chosen depth, approved (`03-design.md`).
 3. Any schema through AI Studio, then visible tasks, with a local test-data switch if content lives in the database.
 4. If there's an admin, its fields alongside each section, not at the end.

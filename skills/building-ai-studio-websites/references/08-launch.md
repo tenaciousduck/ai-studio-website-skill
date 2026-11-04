@@ -73,7 +73,7 @@ node <skill folder>/tools/cookie-check.mjs https://SITE <scratchpad>/cookies / /
 3. No third-party font or script requests.
 4. Three Lighthouse runs, or PageSpeed Insights.
 5. Google's Rich Results Test and schema.org validator.
-6. Search Console: verify, submit sitemap.
+6. Search Console: verify, submit sitemap. Confirm `/sitemap.xml` answers `application/xml`, `/llms.txt` (if built) answers `text/plain`, and pages carry the safety headers (`curl -sI`).
 7. One real sign-up, read back in the CRM.
 8. If selling, the Payments checks in `07-commerce.md`.
 9. A person checks a real phone.
@@ -82,7 +82,7 @@ node <skill folder>/tools/cookie-check.mjs https://SITE <scratchpad>/cookies / /
 
 - If there's an admin, a short "how to edit your site" page: which tab changes what.
 - Which edits are live immediately, and which need a publish.
-- What needs a build session: replacing images in `public/images`, new uploads worth optimizing, adding a page to the sitemap, schema changes.
+- What needs a build session: replacing images in `public/images`, new uploads worth optimizing, a new fixed page (its sitemap entry is in code; new items join the generated sitemap by themselves), schema changes.
 - A dated list of client tasks. Example: paste a link on launch day.
 - A one-page ownership and costs sheet: who holds each login and who created the account (domain, GitHub, HighLevel, Stripe, Search Console, Google Business Profile), and what the client pays each month. MFA on every vendor account.
 - Backups and leaving: ask AI Studio what backups exist and how to export data and files, then write down the answer. The database sits in AI Studio's account, so this is the client's exit plan.

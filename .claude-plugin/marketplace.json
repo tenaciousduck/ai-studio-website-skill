@@ -8,7 +8,7 @@
     {
       "name": "ai-studio-websites",
       "description": "Build and audit reliable websites with HighLevel AI Studio and Claude Code, for any type of business: platform gaps, depth planning, admin decisions, checkout, forms, consent, legal pages, speed, SEO and launch checks.",
-      "version": "0.2.1",
+      "version": "0.2.2",
       "source": "./",
       "author": {
         "name": "Tyler Hoffarth"

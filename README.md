@@ -92,7 +92,7 @@ To go faster, say "lighter checks", or add `Checking level: lighter` to your set
 
 - **A real production site:** the lessons, tools and code come from a live AI Studio site that takes real payments.
 - **Platform facts** were last checked October to November 2026. AI Studio changes often, so Claude is told to re-check anything a design depends on.
-- **Marked "unproven"** means best practice not yet built, including the sitemap route, security headers, spam protection and test workflow.
+- **Marked "unproven"** means best practice not yet built, including spam protection and the test workflow. The sitemap route, `llms.txt` route and security headers were proven live on 2026-11-04.
 - **The code templates** are starting points. Adapt them to your project and test them.
 
 ## Not legal advice

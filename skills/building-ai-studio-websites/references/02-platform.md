@@ -74,6 +74,11 @@ Check these on each new host with `curl -I`:
 | HTML | `no-cache`, served through Cloudflare. No page caching |
 | `www` | 301 to the bare domain, so the bare domain is official |
 | AVIF | Sent with no `Content-Type`. Browsers still show them |
+| `public/*.xml` | Sent with no `Content-Type`. A checker then reported "no sitemap", so serve the sitemap from a route |
+| `public/*.txt` | `text/plain` |
+| Headers the app sets | Passed through (checked 2026-11-04). Add safety headers in the `src/server.ts` fetch wrapper; static files skip it |
+
+**Generated files** (sitemap, `llms.txt`) are server-only routes. Name the file `src/routes/sitemap[.]xml.ts`, and write `createFileRoute("/sitemap.xml")({ server: { handlers: { GET } } })` returning a `Response` with its own `Content-Type`. Import server modules inside the handler; a route with only `server` is left out of the browser bundle. A static file at the same address wins, so delete it. Proven live on the first site 2026-11-04, including HEAD requests.
 
 Every published page also loads AI Studio's visit statistics (`/__vibe/analytics.js`), which sets a 30-minute cookie for every visitor and records IP addresses. Cloudflare adds `__cf_bm`. The site's code couldn't turn either off, so the privacy page must say so (`09-legal.md`).
 
