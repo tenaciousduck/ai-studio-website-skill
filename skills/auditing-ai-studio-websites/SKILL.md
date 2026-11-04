@@ -35,7 +35,7 @@ The audit writes only the report, `docs/STATUS.md` and that `.gitignore` line: n
 1. Read `docs/STATUS.md` and the report. First commit on the phase branch: `docs/STATUS.md`, any `.gitignore` change, and a report in `docs/audit/`.
 2. Plan with `superpowers:writing-plans` beyond a few lines; execute with `superpowers:subagent-driven-development` at the dial's level.
 3. Fix with the build skill's chapters and templates, citing its chapter. Where nothing should look different, compare before and after (rule 9).
-4. Review, merge per the setup file. The owner publishes; run the live check.
+4. Review, merge per the setup file. The owner publishes; run the live check: the same tools on the live site, plus `curl -sI` for headers and generated files. If the findings came from an outside checker, ask the owner to re-run it.
 5. Mark each finding fixed, with evidence. Update `docs/STATUS.md`; give the next session's line.
 
 Not legal advice. Never claim compliance.
