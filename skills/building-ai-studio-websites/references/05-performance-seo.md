@@ -97,25 +97,31 @@ Build these once, centrally:
 - One `SITE_URL` constant. Check which of `www` or bare is official (`curl -I`), and use it everywhere: site, sitemap, robots, share tags.
 - Root route head adds canonical and `og:url` for every page from the current path, so new pages inherit them. Skip `/auth`, `/admin` and not-found. `/auth` and `/admin` also carry `noindex`. `matches[].status` is stale inside `head`, so a missing item may keep its canonical, which is harmless on a true 404.
 - Missing items return a real 404, not a 200 "not found" page.
-- Each page sets its own title and description, editable in the admin if the site has one. Keep descriptions under 160 characters.
+- Each page sets its own title and description, editable in the admin if the site has one. Aim for descriptions of 100-130 characters. Google shows about 155-160, but outside checkers flag anything over 130, and the shorter range satisfies both.
+- Keep each page's default description in one constant, not copied into several files. A description saved in the admin beats the code default, so check the database before editing code. Pin the home description's length with a test. Descriptions are hidden from visitors, so tell the owner where they show: under the link in search results, and in link previews.
+- Single-language sites: the root route adds `<link rel="alternate" hreflang="en">` and `hreflang="x-default"`, both pointing at the page's canonical address, beside the canonical tag and skipped wherever the canonical is. Use a region code such as `en-CA` only when real regional versions exist. A translated site lists every version on every page. React writes the attribute as `hrefLang`, which is fine, because HTML attribute names ignore case.
 - A default share image for pages without one, with absolute addresses.
 - `robots.txt` allows all crawlers and names the sitemap.
-- `sitemap.xml` lists only final, indexable addresses, no redirects. On the first site it was a static file, so a new item needed adding by hand. Default on new sites: a route that generates the sitemap from the database. It's unproven, so confirm the route responds on the live host.
+- `sitemap.xml` lists only final, indexable addresses, no redirects. On the first site it was a static file, so a new item needed adding by hand. Default on new sites: a route that generates the sitemap from the database. It's unproven, so confirm the route responds on the live host. **Send it with `Content-Type: application/xml`.** On AI Studio, a static `public/sitemap.xml` came back with no Content-Type at all, and an outside checker reported "no sitemap" though the file was fine. The missing type is the likely cause, not yet confirmed by a re-scan. Check with `curl -sI`; `tools/seo-check.mjs` flags it.
 - Security headers: the first site sent none of the common ones. Default on new sites, unproven: add the safe ones (`Strict-Transport-Security`, `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`) if the host allows it, and check with `curl -I`. Leave a content security policy until the checkout is proven with it.
 - Pages render real text on the server. Confirm with `tools/seo-check.mjs`.
-- One `h1` per page. Decorative images use empty alt on purpose.
+- `llms.txt` is optional: a plain-text summary of the site for AI tools, proposed in 2024. Major AI search tools haven't said they read it, so offer it, don't require it. If the owner wants one, build it from approved copy, keep it in step with the site (generate it from the database like the sitemap), and send it as `text/plain`. It doesn't replace server-rendered text. If the raw HTML already holds the page's words, AI crawlers can read them.
+- One `h1` per page.
+- **Alt text policy is the owner's decision, made at kickoff.** Accessibility practice gives decorative images `alt=""`, so screen readers skip them. Most outside checkers flag an empty alt as "missing". If the owner wants every image described, build the text from data the page already has (`${title} cover`, `Artwork from ${title}`), so it can't add new claims or spoilers. Images inside an `aria-hidden` area cost screen-reader users nothing. An image next to text that says the same thing gets read twice: accept that knowingly, or keep it empty. Apply the policy to every page, pop-ups included. Give admin uploads an alt field with a fallback.
 - Tracking-tagged addresses must canonicalize to the clean one.
 
 ## Structured data
 
 Put it in one tested file (`structured-data.ts`). Reuse approved copy only, so no new claims sneak in.
 
+**Shape:** one `<script type="application/ld+json">` block per thing, each with its own `"@context": "https://schema.org"` and a top-level `"@type"`, linked by `"@id"` (a book's `author` is `{"@id": "https://example.com/#author"}`). An `@graph` bundle is equally valid, but an outside checker reported a bundle that passed schema.org's validator as having "critical errors". The checker gave no detail, so the bundle is the likely cause, not a confirmed one. One block per thing is the simplest shape for any tool. In TanStack Start, `head().meta` is typed for `<meta>` attributes only, so a `{ "script:ld+json": block }` entry built by a helper needs a cast. Keep that cast in one `ldJsonTags()` helper.
+
 - Business or person: `Person`, `Organization` or a suitable `LocalBusiness` subtype, with `sameAs` for real profiles.
 - `WebSite` on home, `ProfilePage` on about.
 - Item pages: the right type (`Book`, `Product`, `Service`) plus `BreadcrumbList`.
 - Mark up only what's true and visible. A contributor to a collection isn't its author. Leave out prices that live in a sealed checkout, and identifiers you don't store.
 
-Validate on the live pages with Google's Rich Results Test and the schema.org validator. Not every type gets a rich result: `Book` doesn't, so a clean test may report only breadcrumbs.
+Validate on the live pages with Google's Rich Results Test and the schema.org validator. The validator can be scripted: `POST https://validator.schema.org/validate` with `url=` or `html=`. Strip the first 4 characters, `)]}'`, before parsing the JSON. Not every type gets a rich result: `Book` doesn't, so a clean test may report only breadcrumbs.
 
 ## Local businesses
 
@@ -135,6 +141,28 @@ Sales-style audits mix real findings with templates. Check each claim against th
 - **Real:** fix it.
 - **Generic or wrong:** explain why. On the first site, "missing alt" meant deliberate empty alts, and "invisible to AI" was false because every crawler was allowed and pages held 300-750 words.
 - **Missed:** look for what they didn't catch. The report missed a sitemap made entirely of redirects.
+
+Automated SEO checkers (the score-and-flags kind) need a fourth bucket:
+
+- **Cheap to silence:** harmless, but quick to fix, and leaving it means it comes back on every scan. Fix it, and tell the owner that's why.
+
+And some habits:
+
+- A checker scans one page. Fix the rule on every page, and show a before and after table across all public pages.
+- Ask for the checker's detailed message when a flag gives none. Without it, a fix is a guess, so say so.
+- Re-run the owner's checker after publishing.
+
+Flags that are usually false alarms on these sites, so check them before changing anything:
+
+| Flag | Usual cause | Response |
+|---|---|---|
+| "Not using CSS media queries" | Tailwind v4 writes `@media (width>=900px)`, the newer range syntax. Older checkers search for `min-width` only. | Count `@media` in the built CSS and check the layout at phone width. No change. |
+| "Render-blocking resources" | The site's one stylesheet. Every styled page has one. | Ignore while largest paint and the PageSpeed score are within target. Third-party fonts or scripts in first paint are real; see "Fonts". |
+| Structured data "errors" with no detail | Possibly an `@graph` bundle (seen once, unconfirmed) | Validate it; if it's clean, switch to one block per thing. |
+| "Images missing alt" | Deliberate `alt=""` | Follow the owner's alt policy. |
+| "No hreflang" | A single-language site | Add the self-referencing pair; it's cheap. |
+| "No sitemap" while one exists | Likely a missing XML Content-Type | Send `application/xml`. |
+| Local business schema, address, hours | The checker assumes a shop | Skip for authors, online shops and creators, and respect where the owner chose to show a phone or address. A business without a location can use `Organization`, never `LocalBusiness`. |
 
 A scary score is a hook. Never let one set priorities.
 

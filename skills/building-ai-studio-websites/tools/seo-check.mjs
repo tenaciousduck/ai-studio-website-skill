@@ -7,7 +7,7 @@
 // with no paths to use every address in the site's sitemap.xml.
 // Also lists AI bot access, llms.txt and security headers.
 import { AI_BOTS_CHECKED, aiBotAccess, starGroupBlocksAll } from "./lib/ai-bots.mjs";
-import { isPlainTextFile, missingSecurityHeaders } from "./lib/http-checks.mjs";
+import { isPlainTextFile, isXmlFile, missingSecurityHeaders } from "./lib/http-checks.mjs";
 
 const [base, ...given] = process.argv.slice(2);
 if (!base) {
@@ -49,8 +49,10 @@ console.log(`security headers: ${missing.length ? `not set: ${missing.join(", ")
 const sitemap = await fetch(`${base}/sitemap.xml`);
 const sitemapText = sitemap.ok ? await sitemap.text() : "";
 const listed = [...sitemapText.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-console.log(`sitemap.xml [${sitemap.status}] ${listed.length} addresses`);
+const sitemapType = sitemap.headers.get("content-type") || "none";
+console.log(`sitemap.xml [${sitemap.status}] ${listed.length} addresses, Content-Type: ${sitemapType}`);
 if (!sitemap.ok) problem("no sitemap.xml");
+else if (!isXmlFile(sitemapType)) problem(`sitemap.xml isn't sent as XML (Content-Type: ${sitemapType})`);
 for (const url of listed) {
   const res = await fetch(url, { redirect: "manual" });
   // A sitemap must list final addresses: a redirect wastes the crawl.
@@ -75,6 +77,9 @@ for (const p of pages) {
   const h1s = (html.match(/<h1[\s>]/g) || []).length;
   const images = [...html.matchAll(/<img\b[^>]*>/g)].map((m) => m[0]);
   const noAlt = images.filter((t) => !/\balt=/.test(t)).length;
+  const emptyAlt = images.filter((t) => /\balt=""/.test(t)).length;
+  const hreflang = (head.match(/<link[^>]*hreflang=/gi) || []).length;
+  let bundled = false;
   const words = html
     .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<[^>]+>/g, " ")
     .split(/\s+/)
@@ -83,6 +88,7 @@ for (const p of pages) {
     (m) => {
       try {
         const data = JSON.parse(m[1]);
+        if (data["@graph"]) bundled = true;
         return (data["@graph"] || [data]).map((n) => n["@type"]);
       } catch (error) {
         problem("structured data doesn't parse:", error.message);
@@ -96,6 +102,10 @@ for (const p of pages) {
   console.log(`  description (${(description[0] || "").length}): ${(description[0] || "").slice(0, 110)}`);
   console.log(`  canonical: ${canonical.join(" ") || "none"} | h1: ${h1s} | structured: ${structured.join(", ") || "none"}`);
   console.log(`  share image: ${ogImage[0] || "none"} | robots: ${meta("name", "robots")[0] || "-"}`);
+  console.log(`  hreflang links: ${hreflang} | images: ${images.length}, empty alt: ${emptyAlt}`);
+  // Information only: valid, but outside checkers often flag these. See 05-performance-seo.md.
+  if ((description[0] || "").length > 130) console.log("  note: description over 130 characters; checkers may flag it");
+  if (bundled) console.log('  note: structured data uses an "@graph" bundle; some checkers misread it');
 
   if (p === "/this-page-should-not-exist") {
     if (res.status !== 404) problem(`a missing page answers ${res.status}, not 404`);

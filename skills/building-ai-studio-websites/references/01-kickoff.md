@@ -64,6 +64,8 @@ Ask one at a time. Skip what the brief already answers.
 - What real text, photos, reviews and proof exist? What's missing, and who supplies it by when?
 - Are there words or facts that must never appear? (Unreleased details, competitor names, vendor names, legal claims.)
 - What does a person see before any content exists? Hide empty sections rather than fill them.
+- Should decorative images be described or left blank? Blank is accessibility best practice. Described satisfies outside SEO checkers. See "SEO foundations" in `05-performance-seo.md`.
+- Do they want an `llms.txt` summary for AI tools? It's optional; see the same section.
 
 **Editing**
 - Who edits the site, and how technical are they? What will they change weekly, yearly, never?
